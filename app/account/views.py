@@ -3,9 +3,9 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.mixins import CreateModelMixin, ListModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
-from .serializers import UserSerializer, RegisterSerializer
+from .serializers import UserSerializer, RegisterSerializer, MyTokenObtaiTokenSerializer
 from django.http import JsonResponse
-
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenBlacklistView
 from .models import User
 
 
@@ -17,22 +17,12 @@ class RegisterView(GenericAPIView, CreateModelMixin):
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
-    
-class LoginView(GenericAPIView, CreateModelMixin):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+
+
+
+class LoginView(TokenObtainPairView):
+    serializer_class = MyTokenObtaiTokenSerializer
     permission_classes = [AllowAny]
-
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
-    
-class LogoutView(GenericAPIView, DestroyModelMixin):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request, *args, **kwargs):
-        return self.destroy(request, *args, **kwargs)
 
 
 class testView(GenericAPIView, ListModelMixin):
